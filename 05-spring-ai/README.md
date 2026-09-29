@@ -83,3 +83,29 @@ Run the application and tests:
 
 - Educational final project focused on AI plus architectural discipline.
 - External provider integration tests may require active credentials.
+
+## Project Evolution: Transaction Validation
+
+This version adds domain validation before a transaction reaches the repository:
+
+- id is required;
+- description is required and cannot be blank;
+- amount must be greater than zero;
+- category is required;
+- invalid REST requests return HTTP `400` with an error code and message.
+
+The rules live in the domain model, so they protect transactions created through
+both the REST endpoint and AI tool calling. Unit tests also verify that invalid
+data never reaches the repository.
+
+On Windows, run the validation tests with JDK 25:
+
+```powershell
+./gradlew.bat test `
+  --tests "dio.budgeting.domain.TransactionTest" `
+  --tests "dio.budgeting.application.PersistTransactionUseCaseTest" `
+  --tests "dio.budgeting.infrastructure.http.TransactionExceptionHandlerTest"
+```
+
+The original Spring AI and audio flow remains unchanged. Its integration tests
+require an active `OPENAI_API_KEY` and were not executed as part of this evolution.
